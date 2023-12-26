@@ -34,13 +34,21 @@ export class UsersService {
     return await this.userRepository.findOne({ where: { id } });
   }
   //Delete User
-  async deleteUser(id: number): Promise<void> {
+  async deleteUser(id: number): Promise<any> {
     await this.userRepository.delete(id);
+    return { message: `User deleted with id: ${id}` };
   }
-  async customquery(): Promise<any> {
+  async customquery(): Promise<User[]> {
     return await this.userRepository
       .createQueryBuilder('user')
-      .where('user.name LIKE :name', { name: 'B%' })
+      .where('user.name LIKE :name', { name: 'A%' })
+      .andWhere('user.age >= :age', { age: 14 })
+      .getMany();
+  }
+  async queryonage(age: number): Promise<User[]> {
+    return await this.userRepository
+      .createQueryBuilder('user')
+      .where('user.age >= :age', { age: age })
       .getMany();
   }
 }
