@@ -48,7 +48,13 @@ export class UsersService {
   async queryonage(age: number): Promise<User[]> {
     return await this.userRepository
       .createQueryBuilder('user')
-      .where('user.age >= :age', { age: age })
+      .where('user.age <= :age', { age: age })
+      .getMany();
+  }
+  async querybyName(name: string): Promise<User[]> {
+    return await this.userRepository
+      .createQueryBuilder('user')
+      .where('user.name LIKE :name', { name: `${name}%` })
       .getMany();
   }
 }

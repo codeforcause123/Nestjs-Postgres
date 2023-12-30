@@ -49,15 +49,17 @@ export class UsersController {
           console.log('GET ALL');
           return this.usersService.getAllUsers();
         } else {
-          console.log('GET', query);
-          return this.usersService.getOneUser(3);
+          if (!query.name) {
+            return await this.usersService.queryonage(query.age);
+          } else {
+            return await this.usersService.querybyName(query.name);
+          }
         }
       case 'POST':
-        console.log(method, requestBody);
-        return { method: 'POST METHOD', requestBody };
+        return await this.usersService.createUser(requestBody);
       case 'PUT':
         console.log(method);
-        return { message: 'PUT METHOD' };
+        return await this.usersService.updateUser(requestBody.id, requestBody);
       case 'DELETE':
         console.log(method);
         return { message: 'DELETE METHOD' };
@@ -82,8 +84,9 @@ export class UsersController {
   @Post()
   async createUser(
     @Body(new ValidationPipe()) createUser: CreateUserDto,
-  ): Promise<User> {
-    return await this.usersService.createUser(createUser);
+  ): Promise<User[]> {
+    await this.usersService.createUser(createUser);
+    return await this.usersService.getAllUsers();
   }
   @Put(':id')
   async updateUser(
